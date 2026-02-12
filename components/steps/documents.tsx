@@ -118,6 +118,46 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
   return (
     <div className="space-y-6">
       <div className="pb-4 border-b-2 border-border">
+        <h2 className="text-2xl font-bold mb-2">{t.householdTitle}</h2>
+        <p className="text-muted-foreground">{t.householdDesc}</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-2">
+          <Label htmlFor="household_income" className={getLabelClass("household_income")}>
+            {t.householdIncome} <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="household_income"
+            placeholder={t.householdIncomePlaceholder}
+            value={formData.household_income}
+            onChange={(e) => {
+              // Allow numbers, commas, dots, and dollar sign
+              const value = e.target.value
+              updateFormData({ household_income: value })
+            }}
+            required
+            className={getErrorClass("household_income")}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="household_members" className={getLabelClass("household_members")}>
+            {t.householdMembers} <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="household_members"
+            type="number"
+            placeholder={t.householdMembersPlaceholder}
+            value={formData.household_members}
+            onChange={(e) => updateFormData({ household_members: e.target.value })}
+            required
+            className={getErrorClass("household_members")}
+          />
+        </div>
+      </div>
+
+      <div className="pb-4 border-b-2 border-border">
         <h2 className="text-2xl font-bold mb-2">{t.documents}</h2>
         <p className="text-muted-foreground">{t.documentsDesc}</p>
       </div>

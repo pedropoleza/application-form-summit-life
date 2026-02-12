@@ -212,8 +212,6 @@ export async function generatePDF(
         <div class="field"><span class="field-label">Visit Reason:</span><span class="field-value">${formData.visit_reason || "N/A"}</span></div>
         <div class="field"><span class="field-label">Visit Result:</span><span class="field-value">${formData.visit_result || "N/A"}</span></div>
         <div class="field"><span class="field-label">Has pre-existing disease:</span><span class="field-value">${formData.has_preexisting_disease === "Yes" ? t.yes : t.no}</span></div>
-        <div class="field"><span class="field-label">Pre-dx Date:</span><span class="field-value">${formData.pre_dx_date || "N/A"}</span></div>
-        <div class="field"><span class="field-label">Pre-dx Name:</span><span class="field-value">${formData.pre_dx_name || "N/A"}</span></div>
         <div class="field"><span class="field-label">Recent weight change:</span><span class="field-value">${formData.recent_weight_change || "N/A"}</span></div>
         <div class="field"><span class="field-label">Weight change reason:</span><span class="field-value">${formData.weight_change_reason || "N/A"}</span></div>
       </div>
@@ -434,6 +432,8 @@ export async function generatePDF(
           ["Visa type", formData.visa_type],
           ["Visa expiration", formData.visa_expiration_date],
           ["Have a Green Card?", formData.has_green_card],
+          ["Household Income", formData.household_income],
+          ["Household Members", formData.household_members],
         ],
       },
       {
@@ -473,9 +473,13 @@ export async function generatePDF(
           ["Doctor Phone", formData.doctor_phone],
           ["Visit Reason", formData.visit_reason],
           ["Visit Result", formData.visit_result],
+          ["Visit Reason", formData.visit_reason],
+          ["Visit Result", formData.visit_result],
           ["Has pre-existing disease", formData.has_preexisting_disease],
-          ["Pre-dx Date", formData.pre_dx_date],
-          ["Pre-dx Name", formData.pre_dx_name],
+          ...(formData.pre_existing_conditions.flatMap((cond, i) => [
+            [`Condition ${i + 1} Name`, cond.diagnosis_name],
+            [`Condition ${i + 1} Date`, cond.diagnosis_date],
+          ]) as [string, any][]),
           ["Recent weight change", formData.recent_weight_change],
           ["Weight change reason", formData.weight_change_reason],
         ],
@@ -551,10 +555,34 @@ export async function generatePDF(
         addRow("  DOB", b.beneficiary_dob)
         addRow("  Relation", b.beneficiary_relation || b.beneficiary_relation_other)
         addRow("  Percentage", b.beneficiary_percentage)
+        addRow("  Address", b.beneficiary_address)
+        addRow("  Email", b.beneficiary_email)
+        addRow("  Phone", b.beneficiary_phone)
+        addRow("  SSN/ITIN", b.beneficiary_ssn)
         y += 4
       })
     } else {
       addRow("Beneficiaries", "None provided")
+    }
+    y += sectionGap
+
+    // Contingent Beneficiaries
+    addSectionHeader("Contingent Beneficiaries")
+    if (Array.isArray(formData.contingent_beneficiaries) && formData.contingent_beneficiaries.length > 0) {
+      formData.contingent_beneficiaries.forEach((b, idx) => {
+        addRow(`Contingent Beneficiary #${idx + 1}`, "")
+        addRow("  Full Name", b.beneficiary_full_name)
+        addRow("  DOB", b.beneficiary_dob)
+        addRow("  Relation", b.beneficiary_relation || b.beneficiary_relation_other)
+        addRow("  Percentage", b.beneficiary_percentage)
+        addRow("  Address", b.beneficiary_address)
+        addRow("  Email", b.beneficiary_email)
+        addRow("  Phone", b.beneficiary_phone)
+        addRow("  SSN/ITIN", b.beneficiary_ssn)
+        y += 4
+      })
+    } else {
+      addRow("Contingent Beneficiaries", "None provided")
     }
     y += sectionGap
 

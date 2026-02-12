@@ -42,6 +42,8 @@ export type FormData = {
   visa_expiration_date: string
   has_green_card: string
   green_card_upload: string
+  household_income: string
+  household_members: string
   // Step 3
   occupation: string
   employer_name: string
@@ -70,8 +72,10 @@ export type FormData = {
   visit_reason: string
   visit_result: string
   has_preexisting_disease: string
-  pre_dx_date: string
-  pre_dx_name: string
+  pre_existing_conditions: Array<{
+    diagnosis_name: string
+    diagnosis_date: string
+  }>
   recent_weight_change: string
   weight_change_reason: string
   // Step 6
@@ -137,6 +141,21 @@ export type FormData = {
     beneficiary_relation: string
     beneficiary_relation_other: string
     beneficiary_percentage: string
+    beneficiary_address: string
+    beneficiary_email: string
+    beneficiary_phone: string
+    beneficiary_ssn: string
+  }>
+  contingent_beneficiaries: Array<{
+    beneficiary_full_name: string
+    beneficiary_dob: string
+    beneficiary_relation: string
+    beneficiary_relation_other: string
+    beneficiary_percentage: string
+    beneficiary_address: string
+    beneficiary_email: string
+    beneficiary_phone: string
+    beneficiary_ssn: string
   }>
   // Step 10
   agreement: boolean
@@ -173,6 +192,8 @@ export default function InsuranceForm() {
     visa_expiration_date: "",
     has_green_card: "",
     green_card_upload: "",
+    household_income: "",
+    household_members: "",
     occupation: "",
     employer_name: "",
     time_worked: "",
@@ -198,8 +219,7 @@ export default function InsuranceForm() {
     visit_reason: "",
     visit_result: "",
     has_preexisting_disease: "",
-    pre_dx_date: "",
-    pre_dx_name: "",
+    pre_existing_conditions: [],
     recent_weight_change: "",
     weight_change_reason: "",
     used_nicotine_5y: "",
@@ -256,6 +276,7 @@ export default function InsuranceForm() {
     family_history_major: "",
     details_family_history_major: "",
     beneficiaries: [],
+    contingent_beneficiaries: [],
     agreement: false,
     signature: "",
     consent: false,
@@ -442,7 +463,18 @@ export default function InsuranceForm() {
 
     // Only enforce 100% total if there are any beneficiaries
     if (formData.beneficiaries.length > 0 && totalPercentage !== 100) {
-      setSubmitError(`Beneficiaries percentages must total exactly 100%. Current total: ${totalPercentage}%`)
+      setSubmitError(`Main Beneficiaries percentages must total exactly 100%. Current total: ${totalPercentage}%`)
+      return
+    }
+
+    const contingentTotalPercentage = formData.contingent_beneficiaries.reduce(
+      (sum, b) => sum + (Number.parseFloat(b.beneficiary_percentage) || 0),
+      0,
+    )
+
+    // Only enforce 100% total if there are any contingent beneficiaries
+    if (formData.contingent_beneficiaries.length > 0 && contingentTotalPercentage !== 100) {
+      setSubmitError(`Contingent Beneficiaries percentages must total exactly 100%. Current total: ${contingentTotalPercentage}%`)
       return
     }
 

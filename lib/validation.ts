@@ -30,6 +30,9 @@ export const validateStep = (step: number, formData: FormData): string[] => {
                 if (!formData.has_green_card) errors.push("has_green_card")
                 if (formData.has_green_card === "yes" && !formData.green_card_upload) errors.push("green_card_upload")
             }
+            // Household Info
+            if (!formData.household_income) errors.push("household_income")
+            if (!formData.household_members) errors.push("household_members")
             return errors
         case 3: // Employment
             if (!formData.occupation) errors.push("occupation")
@@ -68,8 +71,15 @@ export const validateStep = (step: number, formData: FormData): string[] => {
             }
             if (!formData.has_preexisting_disease) errors.push("has_preexisting_disease")
             if (formData.has_preexisting_disease === "yes") {
-                if (!formData.pre_dx_date) errors.push("pre_dx_date")
-                if (!formData.pre_dx_name) errors.push("pre_dx_name")
+                // Validate array of conditions
+                if (formData.pre_existing_conditions.length === 0) {
+                     // Should have at least one if YES
+                } else {
+                     formData.pre_existing_conditions.forEach((cond, idx) => {
+                         if (!cond.diagnosis_name) errors.push(`pre_existing_conditions[${idx}].diagnosis_name`)
+                         if (!cond.diagnosis_date) errors.push(`pre_existing_conditions[${idx}].diagnosis_date`)
+                     })
+                }
             }
             if (!formData.recent_weight_change) errors.push("recent_weight_change")
             if (formData.recent_weight_change === "yes") {
@@ -133,7 +143,24 @@ export const validateStep = (step: number, formData: FormData): string[] => {
                 if (!b.beneficiary_relation) errors.push(`beneficiaries[${index}].beneficiary_relation`)
                 if (b.beneficiary_relation === "Other" && !b.beneficiary_relation_other) errors.push(`beneficiaries[${index}].beneficiary_relation_other`)
                 if (!b.beneficiary_percentage) errors.push(`beneficiaries[${index}].beneficiary_percentage`)
+                if (!b.beneficiary_address) errors.push(`beneficiaries[${index}].beneficiary_address`)
+                if (!b.beneficiary_email) errors.push(`beneficiaries[${index}].beneficiary_email`)
+                if (!b.beneficiary_phone) errors.push(`beneficiaries[${index}].beneficiary_phone`)
             })
+
+            // Optional contingent beneficiaries check
+            if (formData.contingent_beneficiaries && formData.contingent_beneficiaries.length > 0) {
+                 formData.contingent_beneficiaries.forEach((b, index) => {
+                    if (!b.beneficiary_full_name) errors.push(`contingent_beneficiaries[${index}].beneficiary_full_name`)
+                    if (!b.beneficiary_dob) errors.push(`contingent_beneficiaries[${index}].beneficiary_dob`)
+                    if (!b.beneficiary_relation) errors.push(`contingent_beneficiaries[${index}].beneficiary_relation`)
+                    if (b.beneficiary_relation === "Other" && !b.beneficiary_relation_other) errors.push(`contingent_beneficiaries[${index}].beneficiary_relation_other`)
+                    if (!b.beneficiary_percentage) errors.push(`contingent_beneficiaries[${index}].beneficiary_percentage`)
+                     if (!b.beneficiary_address) errors.push(`contingent_beneficiaries[${index}].beneficiary_address`)
+                    if (!b.beneficiary_email) errors.push(`contingent_beneficiaries[${index}].beneficiary_email`)
+                    if (!b.beneficiary_phone) errors.push(`contingent_beneficiaries[${index}].beneficiary_phone`)
+                })
+            }
             return errors
         default:
             return []

@@ -137,70 +137,119 @@ export function MedicalHistory({ formData, updateFormData, language, errors = []
         </div>
       )}
 
-      <div className="space-y-3">
-        <Label className={getLabelClass("has_preexisting_disease")}>
-          {t.hasPreexistingDisease} <span className="text-destructive">*</span>
-        </Label>
-        <div className="grid grid-cols-2 gap-3 max-w-md">
-          <button
-            type="button"
-            onClick={() => updateFormData({ has_preexisting_disease: "yes" })}
-            className={cn(
-              "py-3 px-6 rounded-xl border-2 font-semibold text-sm uppercase tracking-wide transition-all duration-200",
-              formData.has_preexisting_disease === "yes"
-                ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
-                : "bg-card text-card-foreground border-border hover:border-primary hover:shadow-md hover:scale-102",
-              errors.includes("has_preexisting_disease") ? "border-destructive" : ""
-            )}
-          >
-            {t.yes}
-          </button>
-          <button
-            type="button"
-            onClick={() => updateFormData({ has_preexisting_disease: "no" })}
-            className={cn(
-              "py-3 px-6 rounded-xl border-2 font-semibold text-sm uppercase tracking-wide transition-all duration-200",
-              formData.has_preexisting_disease === "no"
-                ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
-                : "bg-card text-card-foreground border-border hover:border-primary hover:shadow-md hover:scale-102",
-              errors.includes("has_preexisting_disease") ? "border-destructive" : ""
-            )}
-          >
-            {t.no}
-          </button>
-        </div>
-      </div>
-
-      {formData.has_preexisting_disease === "yes" && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="pre_dx_date" className={getLabelClass("pre_dx_date")}>
-              {t.diagnosisDate} <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="pre_dx_date"
-              type="date"
-              value={formData.pre_dx_date}
-              onChange={(e) => updateFormData({ pre_dx_date: e.target.value })}
-              required
-              className={getErrorClass("pre_dx_date")}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="pre_dx_name" className={getLabelClass("pre_dx_name")}>
-              {t.diagnosisName} <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="pre_dx_name"
-              value={formData.pre_dx_name}
-              onChange={(e) => updateFormData({ pre_dx_name: e.target.value })}
-              required
-              className={getErrorClass("pre_dx_name")}
-            />
+        <div className="space-y-3">
+          <Label className={getLabelClass("has_preexisting_disease")}>
+            {t.hasPreexistingDisease} <span className="text-destructive">*</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3 max-w-md">
+            <button
+              type="button"
+              onClick={() => {
+                updateFormData({
+                  has_preexisting_disease: "yes",
+                  pre_existing_conditions: formData.pre_existing_conditions.length > 0
+                    ? formData.pre_existing_conditions
+                    : [{ diagnosis_name: "", diagnosis_date: "" }]
+                })
+              }}
+              className={cn(
+                  "py-3 px-6 rounded-xl border-2 font-semibold text-sm uppercase tracking-wide transition-all duration-200",
+                  formData.has_preexisting_disease === "yes"
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
+                    : "bg-card text-card-foreground border-border hover:border-primary hover:shadow-md hover:scale-102",
+                  errors.includes("has_preexisting_disease") ? "border-destructive" : ""
+                )}
+            >
+              {t.yes}
+            </button>
+            <button
+              type="button"
+              onClick={() => updateFormData({ has_preexisting_disease: "no", pre_existing_conditions: [] })}
+              className={cn(
+                  "py-3 px-6 rounded-xl border-2 font-semibold text-sm uppercase tracking-wide transition-all duration-200",
+                  formData.has_preexisting_disease === "no"
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg scale-105"
+                    : "bg-card text-card-foreground border-border hover:border-primary hover:shadow-md hover:scale-102",
+                  errors.includes("has_preexisting_disease") ? "border-destructive" : ""
+                )}
+            >
+              {t.no}
+            </button>
           </div>
         </div>
-      )}
+
+        {formData.has_preexisting_disease === "yes" && (
+          <div className="space-y-4">
+            {formData.pre_existing_conditions.map((condition, index) => (
+              <div key={index} className="p-4 border rounded-lg bg-card/50 space-y-4 relative">
+                 <div className="flex justify-between items-center mb-2">
+                    <h4 className="font-semibold text-sm text-muted-foreground">{t.condition} {index + 1}</h4>
+                     {formData.pre_existing_conditions.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newConditions = [...formData.pre_existing_conditions];
+                          newConditions.splice(index, 1);
+                          updateFormData({ pre_existing_conditions: newConditions });
+                        }}
+                         className="text-destructive text-sm hover:underline"
+                      >
+                        {t.removeCondition}
+                      </button>
+                    )}
+                 </div>
+
+                <div className="space-y-2">
+                   <Label className={errors.includes(`pre_existing_conditions[${index}].diagnosis_date`) ? "text-destructive" : ""}>
+                    {t.diagnosisDate} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    type="date"
+                    value={condition.diagnosis_date}
+                    onChange={(e) => {
+                      const newConditions = [...formData.pre_existing_conditions];
+                      newConditions[index].diagnosis_date = e.target.value;
+                      updateFormData({ pre_existing_conditions: newConditions });
+                    }}
+                    required
+                    className={errors.includes(`pre_existing_conditions[${index}].diagnosis_date`) ? "border-destructive" : ""}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                   <Label className={errors.includes(`pre_existing_conditions[${index}].diagnosis_name`) ? "text-destructive" : ""}>
+                    {t.diagnosisName} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    value={condition.diagnosis_name}
+                    onChange={(e) => {
+                      const newConditions = [...formData.pre_existing_conditions];
+                      newConditions[index].diagnosis_name = e.target.value;
+                      updateFormData({ pre_existing_conditions: newConditions });
+                    }}
+                    required
+                    className={errors.includes(`pre_existing_conditions[${index}].diagnosis_name`) ? "border-destructive" : ""}
+                  />
+                </div>
+              </div>
+            ))}
+
+            <button
+               type="button"
+               onClick={() => {
+                 updateFormData({
+                   pre_existing_conditions: [
+                     ...formData.pre_existing_conditions,
+                     { diagnosis_name: "", diagnosis_date: "" }
+                   ]
+                 })
+               }}
+               className="w-full py-2 border-2 border-dashed border-primary/50 text-primary rounded-lg hover:bg-primary/5 transition-colors"
+            >
+              + {t.addCondition}
+            </button>
+          </div>
+        )}
 
       <div className="space-y-3">
         <Label className={getLabelClass("recent_weight_change")}>
