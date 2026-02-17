@@ -62,6 +62,7 @@ export async function POST(req: Request) {
         if (!val) return null
         if (typeof val === "string") return null
         if (val.access_token && typeof val.access_token === "string") return val.access_token
+        if (val.token && typeof val.token === "string") return val.token // Fallback for "token"
         if (Array.isArray(val)) {
           for (const item of val) {
             const t = extractToken(item)
@@ -77,7 +78,8 @@ export async function POST(req: Request) {
 
       const token = extractToken(tokenJson)
       if (!token) {
-        console.error("[submit] token webhook response missing access_token:", tokenJson)
+        console.error("[submit] token webhook response missing access_token. Keys found:", Object.keys(tokenJson))
+        console.error("[submit] full response:", JSON.stringify(tokenJson))
         throw new Error("No access_token returned from token webhook")
       }
       return token
@@ -202,10 +204,15 @@ export async function POST(req: Request) {
     }
 
     // Strip raw base64 data before sending to n8n to reduce size
-    delete (payload as any).pdf_base64
-    delete (payload as any).drivers_license_upload
-    delete (payload as any).passport_upload
-    delete (payload as any).green_card_upload
+    // Strip raw base64 data only if we successfully uploaded and got a URL (or if we explicitly want to remove it to save space even if upload failed - usually better to keep it if upload failed so we don't lose data)
+    // However, for PDF, if we lack URL, we might want to keep base64.
+    if (payload.pdf_url) {
+        delete (payload as any).pdf_base64
+    }
+    // Delete others only if they have URLs or we don't care about fallback
+    if (payload.drivers_license_url) delete (payload as any).drivers_license_upload
+    if (payload.passport_url) delete (payload as any).passport_upload
+    if (payload.green_card_url) delete (payload as any).green_card_upload
     // Also remove signature base64 if desired, or keep it. Usually signature is small.
     // delete (payload as any).signature 
 

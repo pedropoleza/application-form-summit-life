@@ -354,28 +354,7 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
 
         {formData.is_us_citizen === "no" && formData.born_in_usa === "no" && (
           <>
-            <div className="space-y-2">
-              <Label htmlFor="passport_upload" className={getLabelClass("passport_upload")}>
-                {t.passportUpload} <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="passport_upload"
-                type="file"
-                accept="image/*,.pdf"
-                disabled={isCompressing === 'passport_upload'}
-                onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  if (file) {
-                    handleFileUpload(file, 'passport_upload', e.target)
-                  }
-                }}
-                required
-                className={getErrorClass("passport_upload")}
-              />
-              {isCompressing === 'passport_upload' && (
-                <p className="text-sm text-muted-foreground animate-pulse">Compressing image...</p>
-              )}
-            </div>
+
 
             <div className="space-y-3">
               <Label className={getLabelClass("has_valid_visa")}>
@@ -483,6 +462,31 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
                   className={getErrorClass("green_card_upload")}
                 />
                 {isCompressing === 'green_card_upload' && (
+                  <p className="text-sm text-muted-foreground animate-pulse">Compressing image...</p>
+                )}
+              </div>
+            )}
+
+            {formData.has_green_card === "no" && formData.has_drivers_license === "no" && (
+              <div className="space-y-2">
+                <Label htmlFor="passport_upload" className={getLabelClass("passport_upload")}>
+                  {t.passportUpload} <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="passport_upload"
+                  type="file"
+                  accept="image/*,.pdf"
+                  disabled={isCompressing === 'passport_upload'}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      handleFileUpload(file, 'passport_upload', e.target)
+                    }
+                  }}
+                  required
+                  className={getErrorClass("passport_upload")}
+                />
+                {isCompressing === 'passport_upload' && (
                   <p className="text-sm text-muted-foreground animate-pulse">Compressing image...</p>
                 )}
               </div>

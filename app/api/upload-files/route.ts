@@ -25,6 +25,7 @@ export async function POST(req: Request) {
                 if (!val) return null
                 if (typeof val === "string") return null
                 if (val.access_token && typeof val.access_token === "string") return val.access_token
+                if (val.token && typeof val.token === "string") return val.token // Fallback for "token"
                 if (Array.isArray(val)) {
                     for (const item of val) {
                         const t = extractToken(item)
@@ -40,7 +41,8 @@ export async function POST(req: Request) {
 
             const token = extractToken(tokenJson)
             if (!token) {
-                console.error("[upload-files] token webhook response missing access_token:", tokenJson)
+                console.error("[upload-files] token webhook response missing access_token. Keys found:", Object.keys(tokenJson))
+                console.error("[upload-files] full response:", JSON.stringify(tokenJson))
                 throw new Error("No access_token returned from token webhook")
             }
             return token

@@ -151,6 +151,7 @@ export async function generatePDF(
       
       <div class="section">
         <div class="section-title">${t.documents}</div>
+        <div class="field"><span class="field-label">${t.hasDriversLicense}:</span><span class="field-value">${formData.has_drivers_license === "yes" ? t.yes : t.no}</span></div>
         <div class="field"><span class="field-label">${t.isUSCitizen}:</span><span class="field-value">${formData.is_us_citizen === "yes" ? t.yes : t.no}</span></div>
         <div class="field"><span class="field-label">${t.bornInUSA}:</span><span class="field-value">${formData.born_in_usa === "yes" ? t.yes : t.no}</span></div>
         ${formData.born_in_usa === "yes" ? `<div class="field"><span class="field-label">${t.stateOfBirth}:</span><span class="field-value">${formData.state_of_birth || "N/A"}</span></div>` : ""}
@@ -205,13 +206,13 @@ export async function generatePDF(
       
       <div class="section">
         <div class="section-title">Medical / Visits</div>
-        <div class="field"><span class="field-label">Visited doctor in US:</span><span class="field-value">${formData.visited_doctor_us === "Yes" ? t.yes : t.no}</span></div>
+        <div class="field"><span class="field-label">Visited doctor in US:</span><span class="field-value">${formData.visited_doctor_us === "yes" ? t.yes : t.no}</span></div>
         <div class="field"><span class="field-label">${t.lastVisitDate}:</span><span class="field-value">${formData.last_visit_date || "N/A"}</span></div>
         <div class="field"><span class="field-label">Doctor Name:</span><span class="field-value">${formData.doctor_name || "N/A"}</span></div>
         <div class="field"><span class="field-label">Doctor Phone:</span><span class="field-value">${formData.doctor_phone || "N/A"}</span></div>
         <div class="field"><span class="field-label">Visit Reason:</span><span class="field-value">${formData.visit_reason || "N/A"}</span></div>
         <div class="field"><span class="field-label">Visit Result:</span><span class="field-value">${formData.visit_result || "N/A"}</span></div>
-        <div class="field"><span class="field-label">Has pre-existing disease:</span><span class="field-value">${formData.has_preexisting_disease === "Yes" ? t.yes : t.no}</span></div>
+        <div class="field"><span class="field-label">Has pre-existing disease:</span><span class="field-value">${formData.has_preexisting_disease === "yes" ? t.yes : t.no}</span></div>
         <div class="field"><span class="field-label">Recent weight change:</span><span class="field-value">${formData.recent_weight_change || "N/A"}</span></div>
         <div class="field"><span class="field-label">Weight change reason:</span><span class="field-value">${formData.weight_change_reason || "N/A"}</span></div>
       </div>
@@ -219,7 +220,7 @@ export async function generatePDF(
 
       <div class="section">
         <div class="section-title">Habits & Background</div>
-        <div class="field"><span class="field-label">Used nicotine (5y):</span><span class="field-value">${formData.used_nicotine_5y === "Yes" ? t.yes : t.no}</span></div>
+        <div class="field"><span class="field-label">Used nicotine (5y):</span><span class="field-value">${formData.used_nicotine_5y === "yes" ? t.yes : t.no}</span></div>
         <div class="field"><span class="field-label">Product Type:</span><span class="field-value">${formData.nicotine_product_type || "N/A"}</span></div>
         <div class="field"><span class="field-label">Qty Per Day:</span><span class="field-value">${formData.qty_per_day || "N/A"}</span></div>
         <div class="field"><span class="field-label">Last Use Date:</span><span class="field-value">${formData.last_use_date || "N/A"}</span></div>
@@ -399,6 +400,9 @@ export async function generatePDF(
       if (typeof val === "boolean") return val ? "Yes" : "No"
       if (Array.isArray(val)) return val.map((v) => formatVal(v)).join("; ")
       if (typeof val === "object") return JSON.stringify(val)
+      if (typeof val === "string" && ["yes", "no"].includes(val.toLowerCase())) {
+        return val.charAt(0).toUpperCase() + val.slice(1).toLowerCase()
+      }
       return String(val)
     }
 

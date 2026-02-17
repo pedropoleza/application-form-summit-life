@@ -26,9 +26,21 @@ export const validateStep = (step: number, formData: FormData): string[] => {
                 if (!formData.born_in_usa) errors.push("born_in_usa")
                 if (formData.born_in_usa === "yes" && !formData.state_of_birth) errors.push("state_of_birth")
                 if (formData.born_in_usa === "no") {
-                    if (!formData.passport_upload) errors.push("passport_upload")
-                    if (!formData.visa_type) errors.push("visa_type")
-                    if (!formData.green_card_upload) errors.push("green_card_upload")
+                    if (!formData.has_valid_visa) errors.push("has_valid_visa")
+                    if (formData.has_valid_visa === "yes") {
+                        if (!formData.visa_type) errors.push("visa_type")
+                        if (!formData.visa_expiration_date) errors.push("visa_expiration_date")
+                    }
+
+                    if (!formData.has_green_card) errors.push("has_green_card")
+                    if (formData.has_green_card === "yes") {
+                        if (!formData.green_card_upload) errors.push("green_card_upload")
+                    }
+
+                    // Passport is required if: No License AND No Green Card (and not citizen/born in USA)
+                    if (formData.has_green_card === "no" && formData.has_drivers_license === "no") {
+                        if (!formData.passport_upload) errors.push("passport_upload")
+                    }
                 }
             }
             // Household Info
