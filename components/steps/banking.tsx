@@ -93,30 +93,6 @@ export function Banking({ formData, updateFormData, language, errors = [] }: Pro
       </div>
 
       <div className="space-y-3">
-        <Label className={getLabelClass("best_day_to_debit")}>
-          {t.bestDayToDebit} <span className="text-destructive">*</span>
-        </Label>
-        <div className="grid grid-cols-6 gap-2">
-          {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => (
-            <button
-              key={day}
-              type="button"
-              onClick={() => updateFormData({ best_day_to_debit: day.toString() })}
-              className={cn(
-                "h-12 rounded-lg border-2 font-medium transition-colors",
-                formData.best_day_to_debit === day.toString()
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-secondary text-secondary-foreground border-border hover:border-primary",
-                errors.includes("best_day_to_debit") ? "border-destructive" : ""
-              )}
-            >
-              {day}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-3">
         <Label className={getLabelClass("has_current_life_insurance")}>
           {t.hasCurrentLifeInsurance} <span className="text-destructive">*</span>
         </Label>

@@ -87,24 +87,12 @@ export function Employment({ formData, updateFormData, language, errors = [] }: 
           />
         </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="assets_description" className={getLabelClass("assets_description")}>
-            {t.assetsDescription} <span className="text-destructive">*</span>
-          </Label>
-          <Textarea
-            id="assets_description"
-            placeholder={t.assetsPlaceholder}
-            value={formData.assets_description}
-            onChange={(e) => updateFormData({ assets_description: e.target.value })}
-            required
-            className={getErrorClass("assets_description")}
-          />
-        </div>
+
       </div>
 
       <div className="space-y-3">
         <Label className={getLabelClass("has_business")}>
-          {t.ownBusiness} <span className="text-destructive">*</span>
+          {t.ownBusiness}
         </Label>
         <div className="grid grid-cols-2 gap-3">
           <button
@@ -134,26 +122,24 @@ export function Employment({ formData, updateFormData, language, errors = [] }: 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="business_name" className={getLabelClass("business_name")}>
-              {t.businessName} <span className="text-destructive">*</span>
+              {t.businessName}
             </Label>
             <Input
               id="business_name"
               value={formData.business_name}
               onChange={(e) => updateFormData({ business_name: e.target.value })}
-              required
               className={getErrorClass("business_name")}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="business_address" className={getLabelClass("business_address")}>
-              {t.businessAddress} <span className="text-destructive">*</span>
+              {t.businessAddress}
             </Label>
             <Input
               id="business_address"
               value={formData.business_address}
               onChange={(e) => updateFormData({ business_address: e.target.value })}
-              required
               className={getErrorClass("business_address")}
             />
           </div>

@@ -151,18 +151,20 @@ export async function generatePDF(
       
       <div class="section">
         <div class="section-title">${t.documents}</div>
-        <div class="field"><span class="field-label">${t.hasDriversLicense}:</span><span class="field-value">${formData.has_drivers_license === "Yes" ? t.yes : t.no}</span></div>
-        <div class="field"><span class="field-label">${t.bornInUSA}:</span><span class="field-value">${formData.born_in_usa === "Yes" ? t.yes : t.no}</span></div>
-        ${formData.born_in_usa === "Yes" ? `<div class="field"><span class="field-label">${t.stateOfBirth}:</span><span class="field-value">${formData.state_of_birth || "N/A"}</span></div>` : ""}
-        <div class="field"><span class="field-label">${t.hasValidVisa}:</span><span class="field-value">${formData.has_valid_visa === "Yes" ? t.yes : t.no}</span></div>
-        ${formData.has_valid_visa === "Yes"
-      ? `
+        <div class="field"><span class="field-label">${t.isUSCitizen}:</span><span class="field-value">${formData.is_us_citizen === "yes" ? t.yes : t.no}</span></div>
+        <div class="field"><span class="field-label">${t.bornInUSA}:</span><span class="field-value">${formData.born_in_usa === "yes" ? t.yes : t.no}</span></div>
+        ${formData.born_in_usa === "yes" ? `<div class="field"><span class="field-label">${t.stateOfBirth}:</span><span class="field-value">${formData.state_of_birth || "N/A"}</span></div>` : ""}
+        ${formData.is_us_citizen === "no" && formData.born_in_usa === "no" ? `
+        <div class="field"><span class="field-label">${t.hasValidVisa}:</span><span class="field-value">${formData.has_valid_visa === "yes" ? t.yes : t.no}</span></div>
+        ${formData.has_valid_visa === "yes"
+            ? `
           <div class="field"><span class="field-label">${t.visaType}:</span><span class="field-value">${formData.visa_type || "N/A"}</span></div>
           <div class="field"><span class="field-label">${t.visaExpirationDate}:</span><span class="field-value">${formData.visa_expiration_date || "N/A"}</span></div>
         `
-      : ""
-    }
-        <div class="field"><span class="field-label">${t.hasGreenCard}:</span><span class="field-value">${formData.has_green_card === "Yes" ? t.yes : t.no}</span></div>
+            : ""
+          }
+        <div class="field"><span class="field-label">${t.hasGreenCard}:</span><span class="field-value">${formData.has_green_card === "yes" ? t.yes : t.no}</span></div>
+        ` : ""}
       </div>
       <div class="divider"></div>
       
@@ -172,9 +174,8 @@ export async function generatePDF(
         <div class="field"><span class="field-label">${t.employerName}:</span><span class="field-value">${formData.employer_name || "N/A"}</span></div>
         <div class="field"><span class="field-label">${t.timeWorked}:</span><span class="field-value">${formData.time_worked || "N/A"}</span></div>
         <div class="field"><span class="field-label">${t.monthlySalaryUsd}:</span><span class="field-value">$${formData.monthly_salary_usd || "N/A"}</span></div>
-        <div class="field"><span class="field-label">${t.assetsDescription}:</span><span class="field-value">${formData.assets_description || "N/A"}</span></div>
-        <div class="field"><span class="field-label">${t.ownBusiness}:</span><span class="field-value">${formData.has_business === "Yes" ? t.yes : t.no}</span></div>
-        ${formData.has_business === "Yes"
+        <div class="field"><span class="field-label">${t.ownBusiness}:</span><span class="field-value">${formData.has_business === "yes" ? t.yes : t.no}</span></div>
+        ${formData.has_business === "yes"
       ? `
           <div class="field"><span class="field-label">${t.businessName}:</span><span class="field-value">${formData.business_name || "N/A"}</span></div>
           <div class="field"><span class="field-label">${t.businessAddress}:</span><span class="field-value">${formData.business_address || "N/A"}</span></div>
@@ -190,9 +191,8 @@ export async function generatePDF(
         <div class="field"><span class="field-label">Routing Number:</span><span class="field-value">${maskedRouting}</span></div>
         <div class="field"><span class="field-label">Account Number:</span><span class="field-value">${maskedAccount}</span></div>
         <div class="field"><span class="field-label">${t.accountType}:</span><span class="field-value">${formData.account_type || "N/A"}</span></div>
-        <div class="field"><span class="field-label">${t.bestDayToDebit}:</span><span class="field-value">${formData.best_day_to_debit || "N/A"}</span></div>
-        <div class="field"><span class="field-label">${t.hasCurrentLifeInsurance}:</span><span class="field-value">${formData.has_current_life_insurance === "Yes" ? t.yes : t.no}</span></div>
-        ${formData.has_current_life_insurance === "Yes"
+        <div class="field"><span class="field-label">${t.hasCurrentLifeInsurance}:</span><span class="field-value">${formData.has_current_life_insurance === "yes" ? t.yes : t.no}</span></div>
+        ${formData.has_current_life_insurance === "yes"
       ? `
           <div class="field"><span class="field-label">${t.insuranceCompanyName}:</span><span class="field-value">${formData.ins_company_name || "N/A"}</span></div>
           <div class="field"><span class="field-label">${t.policyNumber}:</span><span class="field-value">${formData.policy_number || "N/A"}</span></div>
@@ -426,6 +426,7 @@ export async function generatePDF(
         title: "Important Documents",
         rows: [
           ["Have a driver's license?", formData.has_drivers_license],
+          ["US Citizen?", formData.is_us_citizen],
           ["Born in USA?", formData.born_in_usa],
           ["State of birth", formData.state_of_birth],
           ["Have a valid visa?", formData.has_valid_visa],
@@ -443,7 +444,6 @@ export async function generatePDF(
           ["Employer Name", formData.employer_name],
           ["Time Worked", formData.time_worked],
           ["Monthly Salary (USD)", formData.monthly_salary_usd],
-          ["Assets Description", formData.assets_description],
           ["Own Business?", formData.has_business],
           ["Business Name", formData.business_name],
           ["Business Address", formData.business_address],
@@ -456,7 +456,6 @@ export async function generatePDF(
           ["Routing Number", formData.routing_number],
           ["Account Number", formData.account_number],
           ["Account Type", formData.account_type],
-          ["Best Day to Debit", formData.best_day_to_debit],
           ["Current Life Insurance?", formData.has_current_life_insurance],
           ["Is Replacement?", formData.is_replacement],
           ["Insurance Company", formData.ins_company_name],

@@ -34,6 +34,7 @@ export type FormData = {
   // Step 2
   has_drivers_license: string
   drivers_license_upload: string
+  is_us_citizen: string
   born_in_usa: string
   state_of_birth: string
   passport_upload: string
@@ -49,7 +50,6 @@ export type FormData = {
   employer_name: string
   time_worked: string
   monthly_salary_usd: string
-  assets_description: string
   has_business: string
   business_name: string
   business_address: string
@@ -58,7 +58,6 @@ export type FormData = {
   routing_number: string
   account_number: string
   account_type: string
-  best_day_to_debit: string
   has_current_life_insurance: string
   is_replacement: string
   ins_company_name: string
@@ -169,7 +168,7 @@ const WEBHOOK_URL = process.env.NEXT_PUBLIC_WEBHOOK_URL || ""
 
 export default function InsuranceForm() {
   const [currentStep, setCurrentStep] = useState(1)
-  const [theme, setTheme] = useState<"light" | "dark">("dark")
+  const [theme, setTheme] = useState<"light" | "dark">("light")
   const [language, setLanguage] = useState<Language>("en")
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false)
   const [formData, setFormData] = useState<FormData>({
@@ -184,6 +183,7 @@ export default function InsuranceForm() {
     ssn: "",
     has_drivers_license: "",
     drivers_license_upload: "",
+    is_us_citizen: "",
     born_in_usa: "",
     state_of_birth: "",
     passport_upload: "",
@@ -198,7 +198,6 @@ export default function InsuranceForm() {
     employer_name: "",
     time_worked: "",
     monthly_salary_usd: "",
-    assets_description: "",
     has_business: "",
     business_name: "",
     business_address: "",
@@ -206,7 +205,6 @@ export default function InsuranceForm() {
     routing_number: "",
     account_number: "",
     account_type: "",
-    best_day_to_debit: "",
     has_current_life_insurance: "",
     is_replacement: "",
     ins_company_name: "",

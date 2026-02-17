@@ -191,6 +191,87 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
           </div>
         </div>
 
+        <div className="space-y-3">
+          <Label className={getLabelClass("is_us_citizen")}>
+            {t.isUSCitizen} <span className="text-destructive">*</span>
+          </Label>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => updateFormData({ is_us_citizen: "yes" })}
+              className={`py-3 px-6 rounded-lg transition-all duration-200 font-semibold text-sm tracking-wide ${formData.is_us_citizen === "yes"
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-card border-2 border-border hover:border-primary/50 hover:bg-accent"
+                } ${errors.includes("is_us_citizen") ? "border-destructive" : ""}`}
+            >
+              {t.yes}
+            </button>
+            <button
+              type="button"
+              onClick={() => updateFormData({ is_us_citizen: "no" })}
+              className={`py-3 px-6 rounded-lg transition-all duration-200 font-semibold text-sm tracking-wide ${formData.is_us_citizen === "no"
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-card border-2 border-border hover:border-primary/50 hover:bg-accent"
+                } ${errors.includes("is_us_citizen") ? "border-destructive" : ""}`}
+            >
+              {t.no}
+            </button>
+          </div>
+        </div>
+
+        {formData.is_us_citizen === "yes" && (
+            <div className="space-y-3">
+             <Label className={getLabelClass("born_in_usa")}>
+                {t.bornInUSA} <span className="text-destructive">*</span>
+             </Label>
+             <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => updateFormData({ born_in_usa: "yes" })}
+                    className={`py-3 px-6 rounded-lg transition-all duration-200 font-semibold text-sm tracking-wide ${formData.born_in_usa === "yes"
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                        : "bg-card border-2 border-border hover:border-primary/50 hover:bg-accent"
+                        } ${errors.includes("born_in_usa") ? "border-destructive" : ""}`}
+                   >
+                    {t.yes}
+                   </button>
+                   <button
+                    type="button"
+                    onClick={() => updateFormData({ born_in_usa: "no" })}
+                    className={`py-3 px-6 rounded-lg transition-all duration-200 font-semibold text-sm tracking-wide ${formData.born_in_usa === "no"
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                        : "bg-card border-2 border-border hover:border-primary/50 hover:bg-accent"
+                        } ${errors.includes("born_in_usa") ? "border-destructive" : ""}`}
+                   >
+                    {t.no}
+                   </button>
+              </div>
+            </div>
+        )}
+        
+        {formData.is_us_citizen === "yes" && formData.born_in_usa === "yes" && (
+          <div className="space-y-2">
+            <Label htmlFor="state_of_birth" className={getLabelClass("state_of_birth")}>
+              {t.stateOfBirth} <span className="text-destructive">*</span>
+            </Label>
+            <Select
+              value={formData.state_of_birth}
+              onValueChange={(value) => updateFormData({ state_of_birth: value })}
+            >
+              <SelectTrigger className={getErrorClass("state_of_birth")}>
+                <SelectValue placeholder={t.selectState} />
+              </SelectTrigger>
+              <SelectContent>
+                {US_STATES.map((state) => (
+                  <SelectItem key={state} value={state}>
+                    {state}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
         {formData.has_drivers_license === "yes" && (
           <div className="space-y-2">
             <Label htmlFor="drivers_license_upload" className={getLabelClass("drivers_license_upload")}>
@@ -216,6 +297,8 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
           </div>
         )}
 
+        {formData.is_us_citizen === "no" && (
+            <>
         <div className="space-y-3">
           <Label className={getLabelClass("born_in_usa")}>
             {t.bornInUSA} <span className="text-destructive">*</span>
@@ -243,8 +326,10 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
             </button>
           </div>
         </div>
+        </>
+        )}
 
-        {formData.born_in_usa === "yes" && (
+        {formData.is_us_citizen === "no" && formData.born_in_usa === "yes" && (
           <div className="space-y-2">
             <Label htmlFor="state_of_birth" className={getLabelClass("state_of_birth")}>
               {t.stateOfBirth} <span className="text-destructive">*</span>
@@ -267,7 +352,7 @@ export function Documents({ formData, updateFormData, language, errors = [] }: P
           </div>
         )}
 
-        {formData.born_in_usa === "no" && (
+        {formData.is_us_citizen === "no" && formData.born_in_usa === "no" && (
           <>
             <div className="space-y-2">
               <Label htmlFor="passport_upload" className={getLabelClass("passport_upload")}>

@@ -17,18 +17,19 @@ export const validateStep = (step: number, formData: FormData): string[] => {
             if (!formData.has_drivers_license) errors.push("has_drivers_license")
             if (formData.has_drivers_license === "yes" && !formData.drivers_license_upload) errors.push("drivers_license_upload")
 
-            if (!formData.born_in_usa) errors.push("born_in_usa")
-            if (formData.born_in_usa === "yes") {
-                if (!formData.state_of_birth) errors.push("state_of_birth")
-            } else if (formData.born_in_usa === "no") {
-                if (!formData.passport_upload) errors.push("passport_upload")
-                if (!formData.has_valid_visa) errors.push("has_valid_visa")
-                if (formData.has_valid_visa === "yes") {
+            if (!formData.is_us_citizen) errors.push("is_us_citizen")
+
+            if (formData.is_us_citizen === "yes") {
+                if (!formData.born_in_usa) errors.push("born_in_usa")
+                if (formData.born_in_usa === "yes" && !formData.state_of_birth) errors.push("state_of_birth")
+            } else if (formData.is_us_citizen === "no") {
+                if (!formData.born_in_usa) errors.push("born_in_usa")
+                if (formData.born_in_usa === "yes" && !formData.state_of_birth) errors.push("state_of_birth")
+                if (formData.born_in_usa === "no") {
+                    if (!formData.passport_upload) errors.push("passport_upload")
                     if (!formData.visa_type) errors.push("visa_type")
-                    if (!formData.visa_expiration_date) errors.push("visa_expiration_date")
+                    if (!formData.green_card_upload) errors.push("green_card_upload")
                 }
-                if (!formData.has_green_card) errors.push("has_green_card")
-                if (formData.has_green_card === "yes" && !formData.green_card_upload) errors.push("green_card_upload")
             }
             // Household Info
             if (!formData.household_income) errors.push("household_income")
@@ -39,19 +40,13 @@ export const validateStep = (step: number, formData: FormData): string[] => {
             if (!formData.employer_name) errors.push("employer_name")
             if (!formData.time_worked) errors.push("time_worked")
             if (!formData.monthly_salary_usd) errors.push("monthly_salary_usd")
-            if (!formData.assets_description) errors.push("assets_description")
-            if (!formData.has_business) errors.push("has_business")
-            if (formData.has_business === "yes") {
-                if (!formData.business_name) errors.push("business_name")
-                if (!formData.business_address) errors.push("business_address")
-            }
+            // Business section is now optional
             return errors
         case 4: // Banking
             if (!formData.bank_name) errors.push("bank_name")
             if (!formData.routing_number) errors.push("routing_number")
             if (!formData.account_number) errors.push("account_number")
             if (!formData.account_type) errors.push("account_type")
-            if (!formData.best_day_to_debit) errors.push("best_day_to_debit")
             if (!formData.has_current_life_insurance) errors.push("has_current_life_insurance")
             if (formData.has_current_life_insurance === "yes") {
                 if (!formData.is_replacement) errors.push("is_replacement")
